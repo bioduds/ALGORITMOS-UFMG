@@ -35,8 +35,8 @@ class Graph {
 
 Graph::Graph( int V ) {
 	
-    this->V = V;
-	adj = new list<int>[V];
+    this->V = V; // assign do construtor
+	adj = new list<int>[V]; // iniciamos uma lista de adjacencia
 
 }
 
@@ -81,30 +81,33 @@ int main() {
     int c, p, x;
     cin >> c >> p >> x;
 
-    Graph g( p + c - 1 );
+    Graph g( p + c );
 
-    for( int j=1; j <= ( p + c ); j++ ) {
+    int s1, s2;
+
+    for( int j=0; j < ( p + c ); j++ ) {
         //cout << "Correndo linha: " << j << endl;
         string line;
         getline( cin, line );
         istringstream is( line );
         int n;
-        // a partir dos CDs
+
         while( is >> n ) {
             // do something with n
             //cout << "n: " << n << " ";
-            // liga primeiros dos CDs
-            if( j <= c ) {
+            if( j <= c ) { // lendo CDs
+                if( j == 0 ) { s1 = n; }
                 cout << "n: " << n << " ";
-                g.addEdge( j, n );
+                g.addEdge( 0, n );
+            } else {
+
             }
-            //
+
         }
         //cout << "Pula" << endl;
 
     }
-    cout << "Travessia em 0: "; g.DFS( 1 ); cout << endl;
-    cout << "Travessia em 1: "; g.DFS( 2 ); cout << endl;
+    cout << "Travessia em 0: "; g.DFS( 0 ); cout << endl;
 
 	// Create a graph given in the above diagram
 	// Graph g( 4 );
