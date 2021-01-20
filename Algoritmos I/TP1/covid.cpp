@@ -8,6 +8,7 @@
 // C++ program to print DFS traversal from
 // a given vertex in a given graph
 #include<iostream>
+#include <sstream>
 #include<list>
 using namespace std;
 
@@ -83,17 +84,42 @@ int main() {
     cin >> c >> p >> x;
 
     cout << "Peguei: " << c << " - " << p << " - " << x << endl;
+
+    for( int i = 0; i <= c; i++ ) {
+
+        Graph g( p );
+
+        string line;
+        getline( cin, line );
+
+        istringstream is( line );
+        int n;
+        // a partir dos CDs
+        while( is >> n ) {
+            // do something with n
+            cout << "n: " << n << " ";
+            // liga primeiros dos CDs
+            g.addEdge( 0, n );
+        }
+        cout << endl;
+
+        cout << "Traversal \n";
+        g.DFS( 0 );
+        
+        cout << endl;
+
+    }
     
 	// Create a graph given in the above diagram
-	Graph g( 4 );
-	g.addEdge( 0, 1 );
-	g.addEdge( 0, 2 );
-	g.addEdge( 1, 2 );
-	g.addEdge( 2, 0 );
-	g.addEdge( 2, 3 );
-	g.addEdge( 3, 3 );
-	cout << "Following is Depth First Traversal (starting from vertex 2) \n";
-	g.DFS( 2 );
+	// Graph g( 4 );
+	// g.addEdge( 0, 1 );
+	// g.addEdge( 0, 2 );
+	// g.addEdge( 1, 2 );
+	// g.addEdge( 2, 0 );
+	// g.addEdge( 2, 3 );
+	// g.addEdge( 3, 3 );
+	// cout << "Following is Depth First Traversal (starting from vertex x) \n";
+    // g.DFS( 2 );
     cout << endl;
 	return 0;
     
