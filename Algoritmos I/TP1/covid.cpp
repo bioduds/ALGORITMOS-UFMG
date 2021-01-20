@@ -16,9 +16,8 @@ using namespace std;
 // using adjacency list representation
 class Graph {
 
-  private:
     int V; // No. of vertices
-	// Pointer to an array containing
+  	// Pointer to an array containing
 	// adjacency lists
 	list<int> * adj;
 	// A recursive function used by DFS
@@ -80,36 +79,33 @@ int main() {
 
     // begin read of input
     int c, p, x;
-
     cin >> c >> p >> x;
 
-    cout << "Peguei: " << c << " - " << p << " - " << x << endl;
+    Graph g( p + c - 1 );
 
-    for( int i = 0; i <= c; i++ ) {
-
-        Graph g( p );
-
+    for( int j=1; j <= ( p + c ); j++ ) {
+        //cout << "Correndo linha: " << j << endl;
         string line;
         getline( cin, line );
-
         istringstream is( line );
         int n;
         // a partir dos CDs
         while( is >> n ) {
             // do something with n
-            cout << "n: " << n << " ";
+            //cout << "n: " << n << " ";
             // liga primeiros dos CDs
-            g.addEdge( 0, n );
+            if( j <= c ) {
+                cout << "n: " << n << " ";
+                g.addEdge( j, n );
+            }
+            //
         }
-        cout << endl;
-
-        cout << "Traversal \n";
-        g.DFS( 0 );
-        
-        cout << endl;
+        //cout << "Pula" << endl;
 
     }
-    
+    cout << "Travessia em 0: "; g.DFS( 1 ); cout << endl;
+    cout << "Travessia em 1: "; g.DFS( 2 ); cout << endl;
+
 	// Create a graph given in the above diagram
 	// Graph g( 4 );
 	// g.addEdge( 0, 1 );
