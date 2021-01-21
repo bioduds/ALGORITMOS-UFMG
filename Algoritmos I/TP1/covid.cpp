@@ -10,6 +10,7 @@
 #include<iostream>
 #include <sstream>
 #include<list>
+#include <vector>
 using namespace std;
 
 // Graph class represents a directed graph
@@ -77,48 +78,33 @@ void Graph::DFS( int v ) {
 // Driver code
 int main() {
 
-    // begin read of input
     int c, p, x;
     cin >> c >> p >> x;
-
     Graph g( p + c );
-
-    int s1, s2;
-
-    for( int j=0; j < ( p + c ); j++ ) {
-        //cout << "Correndo linha: " << j << endl;
+    vector<string> pLines; 
+    for( int i=0; i<( p + c ); i++ ) {
         string line;
         getline( cin, line );
         istringstream is( line );
         int n;
-
         while( is >> n ) {
-            // do something with n
-            //cout << "n: " << n << " ";
-            if( j <= c ) { // lendo CDs
-                if( j == 0 ) { s1 = n; }
+            if( i <= c ) { // lendo CDs
                 cout << "n: " << n << " ";
                 g.addEdge( 0, n );
-            } else {
-
             }
-
         }
-        //cout << "Pula" << endl;
-
+        pLines.push_back( line );
     }
-    cout << "Travessia em 0: "; g.DFS( 0 ); cout << endl;
+    cout << endl;
 
-	// Create a graph given in the above diagram
-	// Graph g( 4 );
-	// g.addEdge( 0, 1 );
-	// g.addEdge( 0, 2 );
-	// g.addEdge( 1, 2 );
-	// g.addEdge( 2, 0 );
-	// g.addEdge( 2, 3 );
-	// g.addEdge( 3, 3 );
-	// cout << "Following is Depth First Traversal (starting from vertex x) \n";
-    // g.DFS( 2 );
+    for( int j=0; j<c; j++ ) {
+        cout << "CD line: " << pLines[j+1] << endl;
+        for( int j=c+1; j<=pLines.size(); j++ ) {
+            cout << "PV line: " << pLines[j] << endl;
+        }
+    }
+
+    cout << "Travessia em 0: "; g.DFS( 0 ); cout << endl;
     cout << endl;
 	return 0;
     
