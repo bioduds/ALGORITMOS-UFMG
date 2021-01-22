@@ -6,15 +6,16 @@
 ** Prof: Jussara Marques
 */
 
-#include<iostream>
+/** PACOTES E INCLUSÕES **/
+#include <iostream>
 #include <sstream>
-#include<list>
+#include <list>
 #include <vector>
 #include <algorithm>
 using namespace std;
 
-// Classe que representa o grafo direcionado usando lista de adjacências
-class Graph {
+
+class Graph { // Classe que representa o grafo direcionado usando lista de adjacências
     int V; // Número de Vértices
 	list<int> * adj; // Ponteiro para array com a lista de adjacências
 	void DFSUtil( int v, bool visited[], int f ); // Função recursiva do DFS
