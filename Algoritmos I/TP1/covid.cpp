@@ -41,10 +41,10 @@ void Graph::DFSUtil( int v, bool visited[], int f=0 ) {
     path.push_back( v ); // incluímos o vértice visitado ao path
 	list<int>::iterator i; // Recorrência nos vértices adjacentes
 	for( i = adj[v].begin(); i != adj[v].end(); ++i ) {
-  		if( visited[*i] ) { hasCycle = 1; }
         int nFuel = f-1;
-        if( nFuel >= 0 ){ DFSUtil( *i, visited, nFuel ); } // chamada recursiva
-        // } else { hasCycle = 1; } // por teoria, uma revisita configura um ciclo
+  		if( !visited[*i] ) {
+            if( nFuel >= 0 ){ DFSUtil( *i, visited, nFuel ); } // chamada recursiva
+        } else { hasCycle = 1; }
     }
 }
 
@@ -64,10 +64,11 @@ int main() {
         int n;
         while( is >> n ) {
             if( i <= c ) { g.addEdge( 0, n ); } // adicionamos vértices para os CDs
-            else { if( n > 0 ) { g.addEdge( ( i - 2 ), n ); } } // adicionamos os demais vértices
+            else { if( n > 0 ) { g.addEdge( ( i - c ), n ); } } // adicionamos os demais vértices
         }
     }
     g.fuel = 30/x; // Calculamos o "fuel" - qte de postos que cada saída permite visitar
+    cout << "Fuel: " << g.fuel << endl;
     g.DFS( 0 ); // Chamamos o método principal de nossa implementação
     sort( g.path.begin(), g.path.end() ); // realizamos uma ordenação conforme solicitado
     cout << g.path.size() - 1 << endl; // imprimimos o número de visitas
