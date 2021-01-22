@@ -44,7 +44,10 @@ void Graph::DFSUtil( int v, bool visited[], int f=0 ) {
         int nFuel = f-1;
   		if( !visited[*i] ) {
             if( nFuel >= 0 ){ DFSUtil( *i, visited, nFuel ); } // chamada recursiva
-        } else { hasCycle = 1; }
+        } else { 
+            cout << "*i: " << *i << endl;  
+            if( ( *i > 0 ) && ( nFuel >= 0 ) ) { hasCycle = 1; } 
+        }
     }
 }
 
@@ -68,7 +71,6 @@ int main() {
         }
     }
     g.fuel = 30/x; // Calculamos o "fuel" - qte de postos que cada saída permite visitar
-    cout << "Fuel: " << g.fuel << endl;
     g.DFS( 0 ); // Chamamos o método principal de nossa implementação
     sort( g.path.begin(), g.path.end() ); // realizamos uma ordenação conforme solicitado
     cout << g.path.size() - 1 << endl; // imprimimos o número de visitas
