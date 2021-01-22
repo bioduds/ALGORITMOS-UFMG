@@ -45,7 +45,7 @@ void Graph::DFSUtil( int v, bool visited[], int f=0 ) {
   		if( !visited[*i] ) {
             if( nFuel >= 0 ){ DFSUtil( *i, visited, nFuel ); } // chamada recursiva
         } else { 
-            if( ( *i > 0 ) && ( nFuel >= 0 ) ) { hasCycle = 1; } 
+            if( ( *i > 0 ) && ( nFuel > 0 ) ) { hasCycle = 1; }
         }
     }
 }
