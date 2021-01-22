@@ -1,10 +1,10 @@
-/* 
+/*************************************************
 ** Título: Trabalho Prático I - Vacinação COVID-19
 ** Contato: eduardocapanema@ufmg.br
 ** Matrícula: 2020041515
 ** Disciplina: Algoritmos I
 ** Prof: Jussara Marques
-*/
+/*************************************************
 
 /** PACOTES E INCLUSÕES **/
 #include <iostream>
@@ -13,7 +13,6 @@
 #include <vector>
 #include <algorithm>
 using namespace std;
-
 
 class Graph { // Classe que representa o grafo direcionado usando lista de adjacências
     int V; // Número de Vértices
@@ -42,16 +41,16 @@ void Graph::DFSUtil( int v, bool visited[], int f=0 ) {
     path.push_back( v ); // incluímos o vértice visitado ao path
 	list<int>::iterator i; // Recorrência nos vértices adjacentes
 	for( i = adj[v].begin(); i != adj[v].end(); ++i ) {
-  		if( !visited[*i] ) {
-            int nFuel = f-1;
-            if( nFuel >= 0 ){ DFSUtil( *i, visited, nFuel ); } // chamada recursiva
-        } else { hasCycle = 1; } // por teoria, uma revisita configura um ciclo
+  		if( visited[*i] ) { hasCycle = 1; }
+        int nFuel = f-1;
+        if( nFuel >= 0 ){ DFSUtil( *i, visited, nFuel ); } // chamada recursiva
+        // } else { hasCycle = 1; } // por teoria, uma revisita configura um ciclo
     }
 }
 
 void Graph::DFS( int v ) { // Método Principal que realiza a travessia pelos vértices
 	bool *visited = new bool[V]; // Marca todos os vértices como não visitados
-	for( int i = 0; i < V; i++ ) { visited[i] = false; }
+	for( int i = 0; i < V; i++ ) { visited[i] = false; } // "zera"
 	DFSUtil( v, visited, fuel ); // Inicia a chamada do método recursivo
 }
 
@@ -65,7 +64,7 @@ int main() {
         int n;
         while( is >> n ) {
             if( i <= c ) { g.addEdge( 0, n ); } // adicionamos vértices para os CDs
-            else { if( n != 0 ) { g.addEdge( ( i - 2 ), n ); } } // adicionamos os demais vértices
+            else { if( n > 0 ) { g.addEdge( ( i - 2 ), n ); } } // adicionamos os demais vértices
         }
     }
     g.fuel = 30/x; // Calculamos o "fuel" - qte de postos que cada saída permite visitar
@@ -73,9 +72,8 @@ int main() {
     sort( g.path.begin(), g.path.end() ); // realizamos uma ordenação conforme solicitado
     cout << g.path.size() - 1 << endl; // imprimimos o número de visitas
     for( int j=1; j < g.path.size(); j++ ) { cout << g.path[j] << " "; } // lançamos os pontos
+    if( ( g.path.size() - 1 ) == 0 ) cout << "*";
     cout << endl;
     cout << g.hasCycle << endl; // dizemos se há ciclos
-
 	return 0; // finalizamos nossa implementação
-    
 }
