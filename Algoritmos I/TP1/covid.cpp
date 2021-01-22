@@ -11,7 +11,10 @@
 #include <sstream>
 #include<list>
 #include <vector>
+#include <algorithm>
+
 using namespace std;
+
 
 // Graph class represents a directed graph
 // using adjacency list representation
@@ -31,6 +34,8 @@ class Graph {
 	// DFS traversal of the vertices
 	// reachable from v
 	void DFS( int v );
+    vector<int> path;
+    int fuel;
 
 };
 
@@ -53,11 +58,16 @@ void Graph::DFSUtil( int v, bool visited[] ) {
 	// print it
 	visited[v] = true;
 	cout << v << " ";
+    path.push_back( v );
 	// Recur for all the vertices adjacent
 	// to this vertex
+    int spent = 0;
 	list<int>::iterator i;
 	for( i = adj[v].begin(); i != adj[v].end(); ++i ) {
-		if( !visited[*i] ) { DFSUtil( *i, visited ); }
+        spent++;
+        if( spent <= fuel ) {
+    		if( !visited[*i] ) { DFSUtil( *i, visited ); }
+        } else { return; }
     }
 
 }
@@ -66,9 +76,13 @@ void Graph::DFSUtil( int v, bool visited[] ) {
 // It uses recursive DFSUtil()
 void Graph::DFS( int v ) {
 
+    cout << "Doing DFS com fuel: " << fuel << endl;
+
 	// Mark all the vertices as not visited
 	bool *visited = new bool[V];
-	for( int i = 0; i < V; i++ ) { visited[i] = false; }
+	for( int i = 0; i < V; i++ ) { 
+        visited[i] = false; 
+    }
 	// Call the recursive helper function
 	// to print DFS traversal
 	DFSUtil( v, visited );
@@ -82,30 +96,31 @@ int main() {
     cin >> c >> p >> x;
     Graph g( p + c );
     vector<string> pLines; 
-    for( int i=0; i<( p + c ); i++ ) {
+    for( int i=0; i <= ( p + c ); i++ ) {
         string line;
         getline( cin, line );
         istringstream is( line );
         int n;
         while( is >> n ) {
-            if( i <= c ) { // lendo CDs
-                cout << "n: " << n << " ";
-                g.addEdge( 0, n );
+            if( i <= c ) { g.addEdge( 0, n ); } 
+            else {
+                if( n != 0 ) { g.addEdge( ( i - 2 ), n ); }
             }
         }
-        pLines.push_back( line );
+    }
+
+    // calc fuel
+    g.fuel = 30/x;
+    cout << "x: " << x << " 30/x (fuel): " << g.fuel << endl;
+    g.DFS( 0 ); cout << endl;
+    cout << endl;
+    sort( g.path.begin(), g.path.end() );
+    cout << "Comp com vector: ";
+    for( int j=1; j < g.path.size(); j++ ) {
+        cout << g.path[j] << " ";
     }
     cout << endl;
 
-    for( int j=0; j<c; j++ ) {
-        cout << "CD line: " << pLines[j+1] << endl;
-        for( int j=c+1; j<=pLines.size(); j++ ) {
-            cout << "PV line: " << pLines[j] << endl;
-        }
-    }
-
-    cout << "Travessia em 0: "; g.DFS( 0 ); cout << endl;
-    cout << endl;
 	return 0;
     
 }
