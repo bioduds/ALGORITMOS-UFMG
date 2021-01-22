@@ -25,7 +25,7 @@ class Graph {
 	// adjacency lists
 	list<int> * adj;
 	// A recursive function used by DFS
-	void DFSUtil( int v, bool visited[] );
+	void DFSUtil( int v, bool visited[], int f );
 
   public:
 	Graph( int V ); // Constructor
@@ -36,6 +36,7 @@ class Graph {
 	void DFS( int v );
     vector<int> path;
     int fuel;
+    int hasCycle = 0;
 
 };
 
@@ -52,22 +53,24 @@ void Graph::addEdge( int v, int w ) {
 
 }
 
-void Graph::DFSUtil( int v, bool visited[] ) {
+void Graph::DFSUtil( int v, bool visited[], int f=0 ) {
 
+    //cout << "DFSUtil fuel: " << f << endl;
 	// Mark the current node as visited and
 	// print it
 	visited[v] = true;
-	cout << v << " ";
+	//cout << v << " ";
     path.push_back( v );
 	// Recur for all the vertices adjacent
 	// to this vertex
-    int spent = 0;
 	list<int>::iterator i;
 	for( i = adj[v].begin(); i != adj[v].end(); ++i ) {
-        spent++;
-        if( spent <= fuel ) {
-    		if( !visited[*i] ) { DFSUtil( *i, visited ); }
-        } else { return; }
+        //cout << "Checing iter: " << *i << endl;
+  		if( !visited[*i] ) {
+            //cout << "Recursivando..." << endl;
+            int nFuel = f-1;
+            if( nFuel >= 0 ){ DFSUtil( *i, visited, nFuel ); }
+        }
     }
 
 }
@@ -76,7 +79,7 @@ void Graph::DFSUtil( int v, bool visited[] ) {
 // It uses recursive DFSUtil()
 void Graph::DFS( int v ) {
 
-    cout << "Doing DFS com fuel: " << fuel << endl;
+    //cout << "Doing DFS com fuel: " << fuel << endl;
 
 	// Mark all the vertices as not visited
 	bool *visited = new bool[V];
@@ -85,7 +88,7 @@ void Graph::DFS( int v ) {
     }
 	// Call the recursive helper function
 	// to print DFS traversal
-	DFSUtil( v, visited );
+	DFSUtil( v, visited, fuel );
 
 }
 
@@ -111,15 +114,15 @@ int main() {
 
     // calc fuel
     g.fuel = 30/x;
-    cout << "x: " << x << " 30/x (fuel): " << g.fuel << endl;
-    g.DFS( 0 ); cout << endl;
-    cout << endl;
+    //cout << "x: " << x << " 30/x (fuel): " << g.fuel << endl;
+    g.DFS( 0 );
     sort( g.path.begin(), g.path.end() );
-    cout << "Comp com vector: ";
+    cout << g.path.size() - 1 << endl;
     for( int j=1; j < g.path.size(); j++ ) {
         cout << g.path[j] << " ";
     }
     cout << endl;
+    cout << g.hasCycle << endl;
 
 	return 0;
     
