@@ -11,6 +11,7 @@
 #include <sstream>
 #include <list>
 #include <vector>
+#include <queue>
 #include <algorithm>
 using namespace std;
 
@@ -25,6 +26,7 @@ class Graph { // Classe que representa o grafo direcionado usando lista de adjac
     vector<int> path; // vetor contendo os vértices nas rotas
     int fuel; // Qte de postos alcançáveis a partir de um Centro de Distribuição
     int hasCycle = 0; // 1 quando revisitamos um vértice
+    bool isCycle();
 };
 
 Graph::Graph( int V ) {
@@ -34,6 +36,61 @@ Graph::Graph( int V ) {
 
 void Graph::addEdge( int v, int w ) {
 	adj[v].push_back( w ); // Adicionamos w à lista de v’s.
+}
+
+// This function returns true if there is a cycle
+// in directed graph, else returns false.
+bool Graph::isCycle() {
+    // Create a vector to store indegrees of all
+    // vertices. Initialize all indegrees as 0.
+    vector<int> in_degree( V, 0 );
+ 
+    // Traverse adjacency lists to fill indegrees of
+    // vertices. This step takes O(V+E) time
+    for( int u=0; u < V; u++ ) {
+        for( auto v : adj[u] ) { in_degree[v]++; }
+    }
+ 
+    // Create an queue and enqueue all vertices with
+    // indegree 0
+    queue<int> q;
+    for( int i = 0; i < V; i++ ) { 
+        if (in_degree[i] == 0) { q.push(i); }
+    }
+ 
+    // Initialize count of visited vertices
+    int cnt = 0;
+ 
+    // Create a vector to store result (A topological
+    // ordering of the vertices)
+    vector<int> top_order;
+ 
+    // One by one dequeue vertices from queue and enqueue
+    // adjacents if indegree of adjacent becomes 0
+    while( !q.empty() ) {
+ 
+        // Extract front of queue (or perform dequeue)
+        // and add it to topological order
+        int u = q.front();
+        q.pop();
+        top_order.push_back( u );
+ 
+        // Iterate through all its neighbouring nodes
+        // of dequeued node u and decrease their in-degree
+        // by 1
+        list<int>::iterator itr;
+        for( itr = adj[u].begin(); itr != adj[u].end(); itr++ ) {
+            // If in-degree becomes zero, add it to queue
+            if (--in_degree[*itr] == 0) { q.push(*itr); }
+        }
+        cnt++;
+    }
+ 
+    // Check if there was a cycle
+    if (cnt != V) 
+        return true;
+    else
+        return false;
 }
 
 void Graph::DFSUtil( int v, bool visited[], int f=0 ) {
@@ -76,6 +133,6 @@ int main() {
     for( int j=1; j < g.path.size(); j++ ) { cout << g.path[j] << " "; } // lançamos os pontos
     if( ( g.path.size() - 1 ) == 0 ) cout << "*";
     cout << endl;
-    cout << g.hasCycle << endl; // dizemos se há ciclos
+    cout << ( g.isCycle() ? 1 : 0 ) << endl; // dizemos se há ciclos
 	return 0; // finalizamos nossa implementação
 }
