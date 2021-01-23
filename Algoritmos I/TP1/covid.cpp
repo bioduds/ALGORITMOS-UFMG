@@ -16,6 +16,7 @@
 using namespace std;
 
 class Graph { // Classe que representa o grafo direcionado usando lista de adjacências
+  private:
     int V; // Número de Vértices
 	list<int> * adj; // Ponteiro para array com a lista de adjacências
 	void DFSUtil( int v, bool visited[], int f ); // Função recursiva do DFS
@@ -25,8 +26,7 @@ class Graph { // Classe que representa o grafo direcionado usando lista de adjac
 	void DFS( int v ); // Travessia nos vértices a partir de v
     vector<int> path; // vetor contendo os vértices nas rotas
     int fuel; // Qte de postos alcançáveis a partir de um Centro de Distribuição
-    int hasCycle = 0; // 1 quando revisitamos um vértice
-    bool isCycle();
+    bool hasCycle();
 };
 
 Graph::Graph( int V ) {
@@ -38,59 +38,27 @@ void Graph::addEdge( int v, int w ) {
 	adj[v].push_back( w ); // Adicionamos w à lista de v’s.
 }
 
-// This function returns true if there is a cycle
-// in directed graph, else returns false.
-bool Graph::isCycle() {
-    // Create a vector to store indegrees of all
-    // vertices. Initialize all indegrees as 0.
-    vector<int> in_degree( V, 0 );
- 
-    // Traverse adjacency lists to fill indegrees of
-    // vertices. This step takes O(V+E) time
-    for( int u=0; u < V; u++ ) {
+bool Graph::hasCycle() { // encontra ciclos no grafo
+    vector<int> in_degree( V, 0 ); // Cria um vetor para guardar graus dos vértices
+    for( int u=0; u < V; u++ ) { // Realiza travessia na lista de adjacência preenchendo os graus. Obs: O(V+E)
         for( auto v : adj[u] ) { in_degree[v]++; }
     }
- 
-    // Create an queue and enqueue all vertices with
-    // indegree 0
-    queue<int> q;
-    for( int i = 0; i < V; i++ ) { 
-        if (in_degree[i] == 0) { q.push(i); }
+    queue<int> q; // Cria uma fila para os vértices com grau 0
+    for( int i = 0; i < V; i++ ) {
+        if( ( in_degree[i] == 0 ) && ( i == 0 ) ) { q.push(i); }
     }
- 
-    // Initialize count of visited vertices
-    int cnt = 0;
- 
-    // Create a vector to store result (A topological
-    // ordering of the vertices)
-    vector<int> top_order;
- 
-    // One by one dequeue vertices from queue and enqueue
-    // adjacents if indegree of adjacent becomes 0
-    while( !q.empty() ) {
- 
-        // Extract front of queue (or perform dequeue)
-        // and add it to topological order
-        int u = q.front();
-        q.pop();
-        top_order.push_back( u );
- 
-        // Iterate through all its neighbouring nodes
-        // of dequeued node u and decrease their in-degree
-        // by 1
-        list<int>::iterator itr;
+    int cnt = 0; // inicializa contagem de vértices visitados
+    vector<int> top_order; // cria vetor para guardar resultados (ordenação topológica dos vértices)
+    while( !q.empty() ) { // um a um retira da fila e coloca em nova fila de adjacentes se grau do adjacente for 0
+        int u = q.front(); // Pega frente da fila e adiciona na ordem topológica
+        q.pop(); top_order.push_back( u );
+        list<int>::iterator itr; // Corre vizinhos do retirado u e diminui seu grau
         for( itr = adj[u].begin(); itr != adj[u].end(); itr++ ) {
-            // If in-degree becomes zero, add it to queue
-            if (--in_degree[*itr] == 0) { q.push(*itr); }
+            if( --in_degree[*itr] == 0 ) { q.push( *itr ); } // se chegar a 0 o grau adiciona na fila
         }
-        cnt++;
+        cnt++; // incrementa
     }
- 
-    // Check if there was a cycle
-    if (cnt != V) 
-        return true;
-    else
-        return false;
+    return ( cnt != V );
 }
 
 void Graph::DFSUtil( int v, bool visited[], int f=0 ) {
@@ -101,8 +69,6 @@ void Graph::DFSUtil( int v, bool visited[], int f=0 ) {
         int nFuel = f-1;
   		if( !visited[*i] ) {
             if( nFuel >= 0 ){ DFSUtil( *i, visited, nFuel ); } // chamada recursiva
-        } else { 
-            if( ( *i > 0 ) && ( nFuel > 0 ) ) { hasCycle = 1; }
         }
     }
 }
@@ -133,6 +99,6 @@ int main() {
     for( int j=1; j < g.path.size(); j++ ) { cout << g.path[j] << " "; } // lançamos os pontos
     if( ( g.path.size() - 1 ) == 0 ) cout << "*";
     cout << endl;
-    cout << ( g.isCycle() ? 1 : 0 ) << endl; // dizemos se há ciclos
+    cout << ( g.hasCycle() ? 1 : 0 ) << endl; // dizemos se há ciclos
 	return 0; // finalizamos nossa implementação
 }
