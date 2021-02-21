@@ -28,6 +28,7 @@ class Graph {
     void addEdge( int u, int v, int w );
     // Print MST using Prim's algorithm
     void primMST();
+    vector<int> vt;
 };
  
 // Allocates memory for adjacency list
@@ -61,6 +62,7 @@ void Graph::primMST() {
     pq.push( make_pair( 0, src ) );
     key[src] = 0;
     /* Looping till priority queue becomes empty */
+    int sum = 0;
     while( !pq.empty() ) {
         // The first vertex in pair is the minimum key
         // vertex, extract it from priority queue.
@@ -85,35 +87,35 @@ void Graph::primMST() {
                 key[v] = weight;
                 pq.push( make_pair( key[v], v ) );
                 parent[v] = u;
+                sum += weight;
+                printf( "CHO VER: %d\n", sum );
             }
         }
     }
+    for( int i = 1; i < V; ++i ) {
+        //printf( "Valor de i agregado: %d", vt[i] );
+        printf( "%d - %d\n", parent[i], i );
+    }
     // Print edges of MST using parent array
-    for( int i = 1; i < V; ++i ) { printf( "%d - %d\n", parent[i], i ); }
+    for( int j = 0; j < V; ++j ) {
+        //printf( "Valor de j agregado: %d\n", vt[j] );
+    }
 }
 
 /************* FUNÇÃO MAIN *************/
-// Driver program to test methods of graph class
 int main() {
     // create the graph given in above fugure
-
     int n, t;
-    vector<int> vt;
-
     cin >> n >> t;
     cout << "N: " << n << " T: " << t << endl;
-
+    Graph g( n );
     for( int i=0; i<n; i++ ) {
         int val;
         cin >> val;
-        vt.push_back( val );
-        cout << "VT: " << vt[i] << endl;
-
+        g.vt.push_back( val );
+        cout << "VT: " << g.vt[i] << endl;
     }
-
-    Graph g( n );
     //  making above shown graph
-
     for( int j=0; j<t; j++ ) {
         cout << "LINHA " << j << endl;
         int pi, pj, ct;
@@ -121,8 +123,6 @@ int main() {
         cout << "pi: " << pi << " pj: " << pj << " ct:" << ct << endl;
         g.addEdge( pi, pj, ct );
     }
-
-    //g.addEdge( 0, 1, 4 );
     g.primMST();
 	return 0; // finalizamos nossa implementação
 }
