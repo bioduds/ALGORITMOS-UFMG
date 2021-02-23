@@ -161,8 +161,8 @@ void KruskalMST(Graph* graph)
   
 // Ordenamos as entradas
 bool compareByValue( const vector<int> &a, const vector<int>&b ) {
-   if( a[2] < b[2] ) return false;
-   if( b[2] < a[2] ) return true;
+   if( a[2] < b[2] ) return true;
+   if( b[2] < a[2] ) return false;
    // a=b for primary condition, go to secondary
    if( a[3] < b[3] ) return false;
    if( b[3] < a[3] ) return true;
