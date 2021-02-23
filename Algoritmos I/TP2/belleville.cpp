@@ -7,109 +7,207 @@
 /******************************************************
 
 /** PACOTES E INCLUSÕES **/
-#include <iostream>
 #include <bits/stdc++.h>
 using namespace std;
-# define INF 0x3f3f3f3f
-typedef pair<int, int> iPair;
  
-// This class represents a directed graph using adjacency list representation
+// a structure to represent a 
+// weighted edge in graph
+class Edge {
+public:
+    int src, dest, weight;
+};
+ 
+// a structure to represent a connected, 
+// undirected and weighted graph
 class Graph {
-  private:
-    int V; // No. of vertices
-    // In a weighted graph, we need to store vertex and weight pair for every edge
-    list<pair<int, int>> * adj;
-  public:
-    Graph( int V );  // Constructor
-    // function to add an edge to graph
-    void addEdge( int u, int v, int w );
-    // Print MST using Prim's algorithm
-    void primMST();
+public:
+     
+    // V-> Number of vertices, E-> Number of edges
+    int V, E;
+ 
+    // graph is represented as an array of edges.
+    // Since the graph is undirected, the edge
+    // from src to dest is also edge from dest
+    // to src. Both are counted as 1 edge here.
+    Edge* edge;
     vector<int> vt;
 };
  
-// Allocates memory for adjacency list
-Graph::Graph( int V ) {
-    this->V = V;
-    adj = new list<iPair>[V];
+// Creates a graph with V vertices and E edges
+Graph* createGraph(int V, int E)
+{
+    Graph* graph = new Graph;
+    graph->V = V;
+    graph->E = E;
+ 
+    graph->edge = new Edge[E];
+ 
+    return graph;
 }
  
-void Graph::addEdge( int u, int v, int w ) {
-    adj[u].push_back( make_pair( v, w ) );
-    adj[v].push_back( make_pair( u, w ) );
+// A structure to represent a subset for union-find
+class subset {
+public:
+    int parent;
+    int rank;
+};
+ 
+// A utility function to find set of an element i
+// (uses path compression technique)
+int find(subset subsets[], int i)
+{
+    // find root and make root as parent of i
+    // (path compression)
+    if (subsets[i].parent != i)
+        subsets[i].parent
+            = find(subsets, subsets[i].parent);
+ 
+    return subsets[i].parent;
 }
  
-// Prints shortest paths from src to all other vertices
-void Graph::primMST() {
-    // Create a priority queue to store vertices that are being preinMST. This is weird syntax in C++.
-    // Refer below link for details of this syntax http://geeksquiz.com/implement-min-heap-using-stl/
-    priority_queue<iPair, vector<iPair>, greater<iPair>> pq;
-    int src = 0; // Taking vertex 0 as source
-    // Create a vector for keys and initialize all keys as infinite (INF)
-    vector<int> key( V, INF );
-    // To store parent array which in turn store MST
-    vector<int> parent( V, -1 );
-    // To keep track of vertices included in MST
-    vector<bool> inMST( V, false );
-    // Insert source itself in priority queue and initialize its key as 0.
-    pq.push( make_pair( 0, src ) );
-    key[src] = 0;
-    /* Looping till priority queue becomes empty */
-    int sum = 0;
-    while( !pq.empty() ) {
-        // The first vertex in pair is the minimum key vertex, extract it from priority queue. vertex label is stored 
-        // in second of pair (it has to be done this way to keep the vertices sorted key (key must be first item in pair)
-        int u = pq.top().second;
-        pq.pop(); 
-        inMST[u] = true;  // Include vertex in MST
-        // 'i' is used to get all adjacent vertices of a vertex
-        list<pair<int, int>>::iterator i;
-        for( i = adj[u].begin(); i != adj[u].end(); ++i ) {
-            // Get vertex label and weight of current adjacent of u.
-            int v = ( *i ).first;
-            int weight = ( *i ).second;
-            //  If v is not in MST and weight of (u,v) is smaller than current key of v
-            if( inMST[v] == false && key[v] > weight ) {
-                // Updating key of v
-                key[v] = weight;
-                pq.push( make_pair( key[v], v ) );
-                parent[v] = u;
-                sum += weight;
-                printf( "CHO VER: %d\n", sum );
-            }
+// A function that does union of two sets of x and y
+// (uses union by rank)
+void Union(subset subsets[], int x, int y)
+{
+    int xroot = find(subsets, x);
+    int yroot = find(subsets, y);
+ 
+    // Attach smaller rank tree under root of high
+    // rank tree (Union by Rank)
+    if (subsets[xroot].rank < subsets[yroot].rank)
+        subsets[xroot].parent = yroot;
+    else if (subsets[xroot].rank > subsets[yroot].rank)
+        subsets[yroot].parent = xroot;
+ 
+    // If ranks are same, then make one as root and
+    // increment its rank by one
+    else {
+        subsets[yroot].parent = xroot;
+        subsets[xroot].rank++;
+    }
+}
+ 
+// Compare two edges according to their weights.
+// Used in qsort() for sorting an array of edges
+int myComp(const void* a, const void* b)
+{
+    Edge* a1 = (Edge*)a;
+    Edge* b1 = (Edge*)b;
+    return a1->weight > b1->weight;
+}
+ 
+// The main function to construct MST using Kruskal's
+// algorithm
+void KruskalMST(Graph* graph)
+{
+    int V = graph->V;
+    Edge result[V]; // Tnis will store the resultant MST
+    int e = 0; // An index variable, used for result[]
+    int i = 0; // An index variable, used for sorted edges
+ 
+    // Step 1: Sort all the edges in non-decreasing
+    // order of their weight. If we are not allowed to
+    // change the given graph, we can create a copy of
+    // array of edges
+    qsort(graph->edge, graph->E, sizeof(graph->edge[0]),
+          myComp);
+ 
+    // Allocate memory for creating V ssubsets
+    subset* subsets = new subset[(V * sizeof(subset))];
+ 
+    // Create V subsets with single elements
+    for (int v = 0; v < V; ++v) 
+    {
+        subsets[v].parent = v;
+        subsets[v].rank = 0;
+    }
+ 
+    // Number of edges to be taken is equal to V-1
+    while (e < V - 1 && i < graph->E) 
+    {
+        // Step 2: Pick the smallest edge. And increment
+        // the index for next iteration
+        Edge next_edge = graph->edge[i++];
+ 
+        int x = find(subsets, next_edge.src);
+        int y = find(subsets, next_edge.dest);
+ 
+        // If including this edge does't cause cycle,
+        // include it in result and increment the index
+        // of result for next edge
+        if (x != y) {
+            result[e++] = next_edge;
+            Union(subsets, x, y);
         }
+        // Else discard the next_edge
     }
-    for( int i = 1; i < V; ++i ) {
-        //printf( "Valor de i agregado: %d", vt[i] );
-        printf( "%d - %d\n", parent[i], i );
+ 
+    // print the contents of result[] to display the
+    // built MST
+    cout << "Following are the edges in the constructed "
+            "MST\n";
+    int minimumCost = 0;
+    for (i = 0; i < e; ++i) 
+    {
+        cout << result[i].src << " -- " << result[i].dest
+             << " == " << result[i].weight << endl;
+        minimumCost = minimumCost + result[i].weight;
     }
-    // Print edges of MST using parent array
-    for( int j = 0; j < V; ++j ) {
-        //printf( "Valor de j agregado: %d\n", vt[j] );
-    }
+    // return;
+    cout << "Minimum Cost Spanning Tree: " << minimumCost
+         << endl;
 }
+ 
+  
+// Ordenamos as entradas
+bool compareByValue( const vector<int> &a, const vector<int>&b ) {
+   if( a[2] < b[2] ) return false;
+   if( b[2] < a[2] ) return true;
+   // a=b for primary condition, go to secondary
+   if( a[3] < b[3] ) return false;
+   if( b[3] < a[3] ) return true;
+   return false;
+} 
 
 /************* FUNÇÃO MAIN *************/
 int main() {
     // create the graph given in above fugure
     int n, t;
     cin >> n >> t;
-    cout << "N: " << n << " T: " << t << endl;
-    Graph g( n );
+    Graph* g = createGraph( n, t );
     for( int i=0; i<n; i++ ) {
         int val;
         cin >> val;
-        g.vt.push_back( val );
-        cout << "VT: " << g.vt[i] << endl;
+        g->vt.push_back( val );
+        cout << "VT: " << g->vt[i] << endl;
     }
-    //  making above shown graph
+    vector<vector<int>> nodes;
     for( int j=0; j<t; j++ ) {
-        cout << "LINHA " << j << endl;
+        vector<int> node;
         int pi, pj, ct;
         cin >> pi >> pj >> ct;
-        cout << "pi: " << pi << " pj: " << pj << " ct:" << ct << endl;
-        g.addEdge( pi, pj, ct );
+        node.push_back( pi ); node.push_back( pj ); node.push_back( ct ); node.push_back( g->vt[pj] );
+        nodes.push_back( node );
+        cout << "pi: " << node[0] << " pj: " << node[1] << " ct:" << node[2] << " vt:" << node[3] << endl;
     }
-    g.primMST();
+    sort( nodes.begin(), nodes.end(), compareByValue );
+    int pre = nodes[0][0];
+    for( int c=0; c<nodes.size(); c++ ) {
+        printf( "POS SORTADO - [0]: %d [1]: %d [2]: %d [3]: %d\n", nodes[c][0], nodes[c][1], nodes[c][2], nodes[c][3] );
+        if( pre == nodes[c][0] && c>0 ) {
+            printf( "IGUAIS %d %d\n", pre, nodes[c][0] );
+        }
+        pre = nodes[c][0];
+        //g.addEdge( nodes[c][0], nodes[c][1], nodes[c][2] );
+
+        g->edge[c].src = nodes[c][0];
+        g->edge[c].dest = nodes[c][1];
+        g->edge[c].weight = nodes[c][2];
+    }
+
+    KruskalMST( g );
+    //g.primMST();
 	return 0; // finalizamos nossa implementação
 }
+
+
