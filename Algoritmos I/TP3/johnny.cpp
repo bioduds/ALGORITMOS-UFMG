@@ -14,6 +14,7 @@ using namespace std;
  
 /************* FUNÇÃO MAIN *************/
 int main() {
+    // LEITURA
     int n, d, t; // qtd escalas, qtd maxima de escalas com descontos cum. no int. T e tempo máximo p/ aplicação
     cin >> n >> d >> t;
     
