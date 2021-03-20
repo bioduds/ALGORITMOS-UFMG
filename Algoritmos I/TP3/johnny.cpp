@@ -17,6 +17,12 @@ int main() {
     // LEITURA
     int n, d, t; // qtd escalas, qtd maxima de escalas com descontos cum. no int. T e tempo máximo p/ aplicação
     cin >> n >> d >> t;
+
+    // check limits
+    if( n<1 || n>10000 || d<2 || d>100 || t<1 || t>1000 ) {
+        printf( "Favor checar os limites de entrada\n" );
+        return 0;
+    }
     
     vector<int> qtd;
     for( int i=0; i<d; i++ ) { // percorre qtd escalas
