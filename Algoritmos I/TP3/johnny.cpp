@@ -41,6 +41,15 @@ int main() {
         tempos.push_back( t_gasto );
     }
 
+    for( int i=0; i<n; i++ ) {
+        int pago = 0;
+        int time = 0;
+
+        for( int j=0; j<d && time<t && i+j<=n; j++ ) {
+            printf( "Que que tem isso\n" );
+        }
+    }
+
     // Visualizar leitura
     // printf( "n, d, t_max: %d %d %d\n", n, d, t );
     // printf( "QUANTS: " );
