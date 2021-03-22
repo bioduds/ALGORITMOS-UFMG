@@ -11,7 +11,6 @@
 #include <vector> 
 using namespace std;
 
- 
 /************* FUNÇÃO MAIN *************/
 int main() {
     // LEITURA
@@ -41,38 +40,44 @@ int main() {
         _td.push_back( b );
         td.push_back( _td );
     }
+    vector<int> _td;
+    int a, b;
+    cin >> a >> b;
+    _td.push_back( 0 );
+    _td.push_back( 0 );
+    td.push_back( _td );
+    
 
     int span = 0;
     int duracao = 0;
-    float custo = 0;
+    double custo = 0;
+    double desconto = 0;
 
     for( int i=0; i<n; i++ ) {
+        printf( "Entrando no i e d: %d - %d\n", i, d );
         duracao += td[i][0];
-        printf( "Mostra o span: %d\n", span );
+        // printf( "Mostra o span: %d\n", span );
         // aplicar desconto
-        printf( "Mostra o disconto: %f e o valor: %d\n", (float)qtd[i+1]/100, td[i][1] );
         if( span < t ) {
-            custo += ( td[i][1] * ( 1 - (float)qtd[i+1]/100 ) );
+            if( i<d ) {
+                desconto += ( double )qtd[i+1]/100;
+                custo += ( td[i][1] * ( 1 - desconto ) );
+                printf( "Mostra o custo: %f\n", custo );
+            } else {
+                desconto = 0.0f;
+                custo += ( td[i][1] * ( 1 - desconto ) );
+            }
             span += td[i][0];
             if( span >= t ) {
                 span = 0;
                 span += td[i][0];
+                desconto = 0.0f;
             }
         }
+        printf( "Mostra o disconto: %f e o valor: %d\n", desconto, td[i][1] );
     }
 
     printf( "Duracao: %d, Custo: %f\n", duracao, custo );
-
-    // Visualizar leitura
-    // printf( "n, d, t_max: %d %d %d\n", n, d, t );
-    // printf( "QUANTS: " );
-    // for( int i=0; i<qtd.size(); i++ ) {
-    //     printf( " %d", qtd[i] );
-    // }
-    // printf( "\n" );
-    // for( int i=0; i<tempos.size(); i++ ) {
-    //     printf( " %d - %d\n", tempos[i][0], tempos[i][1] );
-    // }
 
 	return 0; // finalizamos nossa implementação
 }
