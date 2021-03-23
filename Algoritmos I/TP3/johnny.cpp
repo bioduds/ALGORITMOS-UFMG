@@ -9,6 +9,7 @@
 /** PACOTES E INCLUSÕES **/
 #include <iostream> 
 #include <vector> 
+#include <bits/stdc++.h> 
 using namespace std;
 
 /************* FUNÇÃO MAIN *************/
@@ -46,38 +47,36 @@ int main() {
     _td.push_back( 0 );
     _td.push_back( 0 );
     td.push_back( _td );
-    
 
-    int span = 0;
-    int duracao = 0;
-    double custo = 0;
-    double desconto = 0;
-
-    for( int i=0; i<n; i++ ) {
-        printf( "Entrando no i e d: %d - %d\n", i, d );
-        duracao += td[i][0];
-        // printf( "Mostra o span: %d\n", span );
-        // aplicar desconto
-        if( span < t ) {
-            if( i<d ) {
-                desconto += ( double )qtd[i+1]/100;
-                custo += ( td[i][1] * ( 1 - desconto ) );
-                printf( "Mostra o custo: %f\n", custo );
+    vector<double> custos;
+    for( int s=0; s<d; s++ ) {
+        int span = 0;
+        double custo = 0.0f;
+        double desconto = 0.0f;
+        int c = 0;
+        for( int i=0; i<=n; i++ ) {
+            if( i>=s ) {
+                if( span < t ) {
+                    desconto += ( double )qtd[c+1]/100;
+                    custo += ( td[i][1] * ( 1 - desconto ) );
+                    span += td[i][0];
+                } else if( span >= t ) {
+                    desconto = 0.0f;
+                    custo += ( td[i][1] * ( 1 - desconto ) );
+                    span = 0;
+                    c=0;
+                }
+                c++;
             } else {
-                desconto = 0.0f;
                 custo += ( td[i][1] * ( 1 - desconto ) );
-            }
-            span += td[i][0];
-            if( span >= t ) {
-                span = 0;
-                span += td[i][0];
-                desconto = 0.0f;
             }
         }
-        printf( "Mostra o disconto: %f e o valor: %d\n", desconto, td[i][1] );
+        custos.push_back( custo );
     }
 
-    printf( "Duracao: %d, Custo: %f\n", duracao, custo );
+    // Verificando o custo
+    sort( custos.begin(), custos.end() );
+    cout << custos[0] << setprecision(2) << endl;
 
 	return 0; // finalizamos nossa implementação
 }
